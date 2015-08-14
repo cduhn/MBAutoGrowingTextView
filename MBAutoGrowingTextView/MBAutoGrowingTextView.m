@@ -17,26 +17,6 @@
 @implementation MBAutoGrowingTextView
 
 
--(id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    
-    if (self) {
-        [self associateConstraints];
-    }
-    
-    return self;
-}
-
--(id) initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-        [self associateConstraints];
-    }
-    return self;
-}
-
 -(void)associateConstraints
 {
     // iterate through all text view's constraints and identify
@@ -58,17 +38,19 @@
             }
         }
     }
-
-}
-
-- (void) layoutSubviews
-{
-    [super layoutSubviews];
-    
     
     NSAssert(self.heightConstraint != nil, @"Unable to find height auto-layout constraint. MBAutoGrowingTextView\
              needs a Auto-layout environment to function. Make sure you are using Auto Layout and that UITextView is enclosed in\
              a view with valid auto-layout constraints.");
+}
+
+- (void) layoutSubviews
+{
+    if (!self.heightConstraint) {
+        [self associateConstraints];
+    }
+    
+    [super layoutSubviews];
     
     // calculate size needed for the text to be visible without scrolling
     CGSize sizeThatFits = [self sizeThatFits:self.frame.size];
